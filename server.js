@@ -10,6 +10,9 @@ const Handlebars = require("handlebars");
 //instancia
 const app = express();
 
+//requires propios
+const modBD = require('./insert_table');
+
 //socket.io
 const httpServer = new HttpServer(app);
 const io = new IOServer(httpServer);
@@ -46,15 +49,18 @@ io.on('connection', (socket) => {
 
     socket.on('nuevo-producto', data => {
         console.log('servidor productos');
+        console.log('data nuevo-producto: ', data);
         setProducto(data)
         io.sockets.emit('productos', productos);
+        modBD.insertProductMysql(data);
     });
 
     socket.on('nuevo-mensaje', data => {
         console.log('servidor mensajes');
-
+        console.log('data nuevo-mensaje: ', data);
         mensajes.push(data);
         io.sockets.emit('mensajes', mensajes);
+        modBD.insertProductSqlite(data);
     });
 });
 
